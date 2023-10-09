@@ -6,7 +6,7 @@
 		"RUN mkdir -p /usr/src/app/",
         "WORKDIR /usr/src/app/",
         "COPY . /usr/src/app/",
-		"RUN pipenv install -r requirements.txt",
+		"RUN pip install -r requirements.txt",
 		"CMD [ \"gunicorn\", \"--bind\", \"0.0.0.0:5000\", \"wsgi:app\" ]"
 	]
 }
