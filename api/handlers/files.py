@@ -31,11 +31,10 @@ def add_new_support_file():
 @multi_auth.login_required
 def get_doc_main_files_info(doc_id):
     doc = DocModel.query.filter_by(doc_id=doc_id).first()
-    main_files = doc.main_files
-    dicts = []
-    for main_file in main_files:
-        dicts.append(doc_schema.dump(doc) | main_file_schema.dump(main_file))
-    return {"doc_and_main_files": dicts}, 200
+    doc_dict = doc_schema.dump(doc)
+    main_files = main_files_schema.dump(doc.main_files)
+    pack = [doc_dict | main_file_dict for main_file_dict in main_files]
+    return {"doc_and_main_files": pack}, 200
 
 
 @app.route("/support_files/<int:project_id>")

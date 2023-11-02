@@ -1,4 +1,7 @@
 from datetime import datetime
+
+import requests
+
 from api import db, Config
 from passlib.apps import custom_app_context as pwd_context
 from itsdangerous import URLSafeSerializer, BadSignature
@@ -18,7 +21,7 @@ class UserModel(db.Model):
     password_hash = db.Column(db.String(255), nullable=False)
     created_on = db.Column(db.DateTime(), default=datetime.utcnow)
     updated_on = db.Column(db.DateTime(), default=datetime.utcnow, onupdate=datetime.utcnow)
-    projects = db.relationship('UsersParty', backref='projects_member',
+    projects = db.relationship('UsersPartyModel',
                                cascade="all, delete-orphan",
                                lazy='dynamic')
     main_files = db.relationship('MainFileModel', backref='user_main_files',
@@ -45,6 +48,7 @@ class UserModel(db.Model):
         self.tin = tin
         self.ntfcn_channel = email + '_msgchannel'
         self.hash_password(password)
+        self.stash_token = None
 
     def hash_password(self, password):
         self.password_hash = pwd_context.hash(password)
@@ -80,4 +84,10 @@ class UserModel(db.Model):
             return None  # invalid token
         user = UserModel.query.get(data['id'])
         return user
+
+    def get_stash_user_token(self, password):
+        headers = {'Content-Type': 'application/x-www-form-urlencoded'}
+        data = f'username={self.email}&password={password}'
+        response = requests.post(f'{Config.STASH_URL}/api2/auth-token/', headers=headers, data=data)
+        self.stash_token = response.json().get('token')
 

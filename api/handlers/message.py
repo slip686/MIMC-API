@@ -3,7 +3,7 @@ from api.models.user import UserModel
 from api.models.message import MessageModel
 from sqlalchemy import false, and_
 from flask import request
-from api.helpers import get_object_or_404
+from utility.helpers import get_object_or_404
 from api.schemas.message import messages_schema
 
 

@@ -1,3 +1,5 @@
+from sqlalchemy.exc import IntegrityError
+
 from api import db, Config
 from api.models.user import UserModel
 from api.models.project import ProjectModel
@@ -13,3 +15,12 @@ class UsersPartyModel(db.Model):
         self.user_id = user_id
         self.project_id = project_id
         self.job_title = job_title
+
+    def save(self):
+        try:
+            db.session.add(self)
+            db.session.commit()
+        except IntegrityError:
+            db.session.rollback()
+            raise ValueError
+

@@ -2,14 +2,14 @@ from sqlalchemy import text
 from api import app, db, multi_auth
 from api.models.doc_place import DocPlaceModel
 from flask import request, abort
-from api.helpers import get_object_or_404
+from utility.helpers import get_object_or_404
 
 
 @app.route("/add_column_to_structure/<int:name>", methods=['POST'])
 @multi_auth.login_required
 def add_column_to_structure(name):
     if name:
-        expression = text(f'ALTER TABLE doc_place_model ADD COLUMN IF NOT EXISTS "{name}" varchar')
+        expression = text(f'ALTER TABLE doc_place_model ADD COLUMN "{name}" varchar')
         db.session.execute(expression)
         db.session.commit()
         return 'success', 200

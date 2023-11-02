@@ -1,7 +1,7 @@
 from flask import request
 from api import app, db, multi_auth
 from api.models.doc import DocModel
-from api.helpers import get_object_or_404
+from utility.helpers import get_object_or_404
 from api.schemas.doc import doc_schema, docs_schema
 
 

@@ -4,8 +4,17 @@ from flask import request, abort
 from api.models.project import ProjectModel
 from api.models.users_party import UsersPartyModel
 from api.models.user import UserModel
-from api.helpers import get_object_or_404
+from utility.helpers import get_object_or_404
 from api.schemas.project import projects_schema, project_schema
+
+
+@app.route("/projects/name/<string:name>")
+@multi_auth.login_required
+def check_project_existence(name):
+    project = ProjectModel.query.filter_by(project_name=name).first()
+    if project:
+        return project.project_name, 200
+    return {'message': 'project name not found'}, 404
 
 
 @app.route("/projects", methods=["POST"])
@@ -24,30 +33,11 @@ def add_new_project():
     return {"id": new_project.id}, 200
 
 
-@app.route("/projects/name/<string:name>")
-@multi_auth.login_required
-def check_project_existence(name):
-    project = ProjectModel.query.filter_by(project_name=name).first()
-    if project:
-        return project.project_name, 200
-    return None, 404
-
-
 @app.route("/projects/<int:project_id>")
 @multi_auth.login_required
 def get_project_info(project_id):
     project = get_object_or_404(ProjectModel, project_id)
     return project_schema.dump(project), 200
-
-
-@app.route("/projects/<int:project_id>/doc_structure/<string:doctype>")
-@multi_auth.login_required
-def get_project_doctype_structure(project_id, doctype):
-    expression = text(f"SELECT * FROM doc_place_model WHERE project_id = {project_id} AND doc_type = '{doctype}'")
-    result = db.session.execute(expression).fetchall()
-    if result:
-        return [tuple(row) for row in result]
-    abort(404)
 
 
 @app.route('/projects/<int:project_id>/users')
@@ -62,3 +52,11 @@ def get_project_users(project_id):
     return results_list, 200
 
 
+@app.route("/projects/<int:project_id>/doc_structure/<string:doctype>")
+@multi_auth.login_required
+def get_project_doctype_structure(project_id, doctype):
+    expression = text(f"SELECT * FROM doc_place_model WHERE project_id = {project_id} AND doc_type = '{doctype}'")
+    result = db.session.execute(expression).fetchall()
+    if result:
+        return [tuple(row) for row in result], 200
+    abort(404)

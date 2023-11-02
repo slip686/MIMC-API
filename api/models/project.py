@@ -12,7 +12,7 @@ class ProjectModel(db.Model):
     time_limits = db.Column(db.String(60), unique=False)
     status = db.Column(db.String(60), unique=False)
     repo_id = db.Column(db.String(255), unique=False)
-    users = db.relationship('UsersParty',
+    users = db.relationship('UsersPartyModel',
                             backref='project_members',
                             lazy='dynamic',
                             cascade="all, delete-orphan")

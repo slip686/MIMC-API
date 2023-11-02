@@ -64,7 +64,7 @@ def restore_pass():
     password = request.json.get('password')
     if email and password:
         user = UserModel.query.filter_by(email=email).first()
-        user.password_hash = user.set_password(password)
+        user.hash_password(password)
         db.session.commit()
 
         ##############################################################
@@ -90,16 +90,7 @@ def restore_pass():
                      json=data, headers=headers)
 
         return 'Password restored', 200
-
     return "Bad request", 400
-
-
-def get_stash_user_token(email, password):
-    headers = {'Content-Type': 'application/x-www-form-urlencoded'}
-    data = f'username={email}&password={password}'
-    response = requests.post(f'{Config.STASH_URL}/api2/auth-token/', headers=headers, data=data)
-    token = response.json()['token']
-    return token
 
 
 @app.route('/test')
@@ -113,29 +104,29 @@ def login_test():
     return "LOGGED IN", 202
 
 
-@app.route('/login', methods=['POST'])
-def login():
-    email = request.json.get("email")
-    password = request.json.get("password")
-    remember_flag = request.json.get("remember")
-    user = db.session.query(UserModel).filter(UserModel.email == email).first()
-    if user:
-        if user.verify_password(password=password):
-            token = get_stash_user_token(email=email, password=password)
-            if remember_flag:
-                login_user(user, remember=True)
-                return user.as_dict | {"stash_token": token}, 202
-            login_user(user)
-            return user_schema.dump(user) | {"stash_token": token}, 202
-        return 'Login unsuccessful', 401
-    return 'Email not found', 404
+# @app.route('/login', methods=['POST'])
+# def login():
+#     email = request.json.get("email")
+#     password = request.json.get("password")
+#     remember_flag = request.json.get("remember")
+#     user = db.session.query(UserModel).filter(UserModel.email == email).first()
+#     if user:
+#         if user.verify_password(password=password):
+#             token = get_stash_user_token(email=email, password=password)
+#             if remember_flag:
+#                 login_user(user, remember=True)
+#                 return user.as_dict | {"stash_token": token}, 202
+#             login_user(user)
+#             return user_schema.dump(user) | {"stash_token": token}, 202
+#         return 'Login unsuccessful', 401
+#     return 'Email not found', 404
 
 
-@app.route('/logout')
-@multi_auth.login_required
-def logout():
-    logout_user()
-    return "Logged out", 200
+# @app.route('/logout')
+# @multi_auth.login_required
+# def logout():
+#     logout_user()
+#     return "Logged out", 200
 
 
 @app.route("/users/email/<string:email>")
@@ -180,5 +171,5 @@ def get_user_roles(user_id):
     if roles:
         for role in roles:
             roles_dict[role.project_id] = role.job_title
-        return roles_dict
+        return roles_dict, 200
     return 'Roles not found', 404

@@ -1,4 +1,8 @@
+import requests
+from flask import request
+
 from api import app, multi_auth
+from config import Config
 
 
 @app.route('/auth/token')
@@ -6,4 +10,4 @@ from api import app, multi_auth
 def get_auth_token():
     user = multi_auth.current_user()
     token = user.generate_auth_token()
-    return {'token': token}, 200
+    return {'api_token': token, 'stash_token': user.stash_token}, 200
