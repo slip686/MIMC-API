@@ -1,5 +1,5 @@
 import os
-
+# some comment
 
 class Config:
     DATABASE_URI_DOCKER = os.environ.get('DATABASE_URI_DOCKER',
