@@ -10,7 +10,7 @@ class UserSchema(ma.SQLAlchemySchema):
 class UserRequestSchema(ma.SQLAlchemySchema):
     class Meta:
         model = UserModel
-        exclude = ('password_hash', 'stash_token')
+        exclude = ('password_hash',)
 
     email = ma.Str(required=True)
     password = ma.Str(required=True)
