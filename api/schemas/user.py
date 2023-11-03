@@ -5,12 +5,13 @@ from api.models.user import UserModel
 class UserSchema(ma.SQLAlchemySchema):
     class Meta:
         model = UserModel
+        exclude = ("password_hash",)
 
 
 class UserRequestSchema(ma.SQLAlchemySchema):
     class Meta:
         model = UserModel
-        exclude = ('password_hash',)
+        exclude = ("password_hash",)
 
     email = ma.Str(required=True)
     password = ma.Str(required=True)
