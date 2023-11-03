@@ -10,4 +10,4 @@ from config import Config
 def get_auth_token():
     user = multi_auth.current_user()
     token = user.generate_auth_token()
-    return {'api_token': token, 'stash_token': user.stash_token}, 200
+    return {'api_token': token, 'stash_token': user.stash_token, 'email': user.email, 'user_id': user.user_id}, 200
