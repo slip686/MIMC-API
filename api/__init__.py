@@ -5,8 +5,14 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_marshmallow import Marshmallow
 
-app = Flask(__name__)
-app.config.from_object(Config)
+
+def create_app():
+    application = Flask(__name__)
+    application.config.from_object(Config)
+    return application
+
+
+app = create_app()
 ctx = app.app_context()
 ctx.push()
 db = SQLAlchemy(app, engine_options={"pool_pre_ping": True})
@@ -15,6 +21,7 @@ ma = Marshmallow(app)
 basic_auth = HTTPBasicAuth()
 token_auth = HTTPTokenAuth('Bearer')
 multi_auth = MultiAuth(basic_auth, token_auth)
+
 
 from api.models.user import UserModel
 from api.models.doc import DocModel
@@ -41,13 +48,3 @@ def verify_token(token):
     from api.models.user import UserModel
     user = UserModel.verify_auth_token(token)
     return user
-
-
-
-
-
-
-
-
-
-
