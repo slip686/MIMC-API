@@ -45,7 +45,7 @@ def register_user():
         headers = {'Accept': 'application/json', 'Content-Type': 'application/json'}
         data = {"password": "1234", "tags": "management"}
         requests.put(f'http://{Config.MSG_BROKER_URL}/api/users/{email}',
-                     auth=(Config.MSG_BROKER_URL, Config.MSG_BROKER_URL),
+                     auth=(Config.MSG_BROKER_LOGIN, Config.MSG_BROKER_PASS),
                      json=data, headers=headers)
         headers = {'Accept': 'application/json', 'Content-Type': 'application/json'}
         data = {"configure": ".*", "read": ".*", "write": ".*"}
