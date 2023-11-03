@@ -13,14 +13,14 @@ def create_app():
 
 
 app = create_app()
-ctx = app.app_context()
-ctx.push()
 db = SQLAlchemy(app, engine_options={"pool_pre_ping": True})
 migrate = Migrate(app, db)
 ma = Marshmallow(app)
 basic_auth = HTTPBasicAuth()
 token_auth = HTTPTokenAuth('Bearer')
 multi_auth = MultiAuth(basic_auth, token_auth)
+ctx = app.app_context()
+ctx.push()
 
 
 from api.models.user import UserModel
