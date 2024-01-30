@@ -13,3 +13,4 @@ marshmallow_sqlalchemy~=0.29.0
 flask_migrate
 psycopg2-binary
 PyJWT~=2.8.0
+cryptography
