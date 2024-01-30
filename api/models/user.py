@@ -1,11 +1,12 @@
-from datetime import datetime
-
+from datetime import datetime, timedelta
 import requests
-
+import jwt
 from api import db, Config
 from passlib.apps import custom_app_context as pwd_context
 from itsdangerous import URLSafeSerializer, BadSignature
 from sqlalchemy.exc import IntegrityError
+
+from api.models.token_blacklist import BlacklistToken
 
 
 class UserModel(db.Model):
@@ -21,7 +22,7 @@ class UserModel(db.Model):
     password_hash = db.Column(db.String(255), nullable=False)
     created_on = db.Column(db.DateTime(), default=datetime.utcnow)
     updated_on = db.Column(db.DateTime(), default=datetime.utcnow, onupdate=datetime.utcnow)
-    projects = db.relationship('UsersPartyModel',
+    projects = db.relationship('UsersPartyModel', backref='users_party_model',
                                cascade="all, delete-orphan",
                                lazy='dynamic')
     main_files = db.relationship('MainFileModel', backref='user_main_files',
@@ -56,9 +57,26 @@ class UserModel(db.Model):
     def verify_password(self, password):
         return pwd_context.verify(password, self.password_hash)
 
-    def generate_auth_token(self):
-        s = URLSafeSerializer(Config.SECRET_KEY)
-        return s.dumps({'id': self.user_id})
+    def generate_auth_token(self, remember=False):
+        payload = None
+        try:
+            if not remember:
+                payload = {
+                    'exp': datetime.utcnow() + timedelta(days=0, seconds=25),
+                    'iat': datetime.utcnow(),
+                    'sub': self.user_id}
+            else:
+                payload = {
+                    'exp': datetime.utcnow() + timedelta(days=30),
+                    'iat': datetime.utcnow(),
+                    'sub': self.user_id}
+            return jwt.encode(
+                payload,
+                Config.SECRET_KEY,
+                algorithm='HS256'
+            )
+        except Exception as e:
+            return e
 
     def get_id(self):
         return self.user_id
@@ -77,17 +95,24 @@ class UserModel(db.Model):
 
     @staticmethod
     def verify_auth_token(token):
-        s = URLSafeSerializer(Config.SECRET_KEY)
         try:
-            data = s.loads(token)
-        except BadSignature:
-            return None  # invalid token
-        user = UserModel.query.get(data['id'])
-        return user
+            payload = jwt.decode(token, Config.SECRET_KEY, algorithms='HS256')
+        except jwt.ExpiredSignatureError:
+            return None
+        except jwt.InvalidTokenError:
+            return None
+        is_blacklisted_token = BlacklistToken.check_blacklist(token)
+        if is_blacklisted_token:
+            return 'Token blacklisted. Please log in again.'
+        else:
+            user = UserModel.query.get(payload['sub'])
+            return user
 
     def get_stash_user_token(self, password):
         headers = {'Content-Type': 'application/x-www-form-urlencoded'}
         data = f'username={self.email}&password={password}'
         response = requests.post(f'{Config.STASH_URL}/api2/auth-token/', headers=headers, data=data)
+        print(response.content)
         self.stash_token = response.json().get('token')
+
 

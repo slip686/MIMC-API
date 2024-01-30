@@ -9,6 +9,7 @@ from api.schemas.doc import doc_schema, docs_schema
 @multi_auth.login_required
 def add_new_document():
     data = request.json
+    print(data)
     new_doc = DocModel(**data)
     try:
         new_doc.save()

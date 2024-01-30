@@ -2,7 +2,7 @@ from api import ma
 from api.models.doc import DocModel
 
 
-class DocSchema(ma.SQLAlchemySchema):
+class DocSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = DocModel
 

@@ -2,9 +2,10 @@ from api import ma
 from api.models.support_file import SupportFileModel
 
 
-class SupportFileSchema(ma.SQLAlchemySchema):
+class SupportFileSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = SupportFileModel
+        fields = ('id', 'file_name', 'file_type', 'loading_time', 'main_file_id', 'project_id')
 
 
 # Десериализация запроса(request)

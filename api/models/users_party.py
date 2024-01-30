@@ -6,6 +6,7 @@ from api.models.project import ProjectModel
 
 
 class UsersPartyModel(db.Model):
+    __tablename__ = 'users_party_model'
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey(UserModel.user_id))
     project_id = db.Column(db.Integer, db.ForeignKey(ProjectModel.id))

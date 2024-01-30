@@ -15,6 +15,9 @@ requests = "*"
 psycopg2 = "*"
 marshmallow-sqlalchemy = "*"
 pytest = "*"
+pyjwt = "*"
+pillow = "*"
+email-validate = "*"
 
 [dev-packages]
 

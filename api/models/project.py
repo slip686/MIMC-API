@@ -25,7 +25,7 @@ class ProjectModel(db.Model):
                                lazy='dynamic',
                                cascade="all, delete-orphan")
     structure = db.relationship('DocPlaceModel',
-                                backref='project_structure',
+                                backref='projectmodel',
                                 lazy='dynamic',
                                 cascade="all, delete-orphan")
     main_files = db.relationship('MainFileModel',

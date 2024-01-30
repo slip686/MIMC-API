@@ -1,5 +1,7 @@
 from api import app, db, Config, multi_auth
 from flask import request, abort
+
+from api.models.token_blacklist import BlacklistToken
 from api.models.user import UserModel
 from utility.helpers import get_object_or_404
 from api.schemas.user import user_schema, users_schema
@@ -77,8 +79,7 @@ def restore_pass():
             'Content-Type': 'application/x-www-form-urlencoded',
         }
         data = {"password": password}
-        requests.put(f'{Config.STASH_URL}/api/v2.1/admin/users/{email}/', headers=headers, data=data)
-
+        resp = requests.put(f'{Config.STASH_URL}/api/v2.1/admin/users/{email}/', headers=headers, data=data)
         ##############################################################
         # RESTORE PASS ON MESSAGE BROKER
         ##############################################################
@@ -104,29 +105,20 @@ def login_test():
     return "LOGGED IN", 202
 
 
-# @app.route('/login', methods=['POST'])
-# def login():
-#     email = request.json.get("email")
-#     password = request.json.get("password")
-#     remember_flag = request.json.get("remember")
-#     user = db.session.query(UserModel).filter(UserModel.email == email).first()
-#     if user:
-#         if user.verify_password(password=password):
-#             token = get_stash_user_token(email=email, password=password)
-#             if remember_flag:
-#                 login_user(user, remember=True)
-#                 return user.as_dict | {"stash_token": token}, 202
-#             login_user(user)
-#             return user_schema.dump(user) | {"stash_token": token}, 202
-#         return 'Login unsuccessful', 401
-#     return 'Email not found', 404
-
-
-# @app.route('/logout')
-# @multi_auth.login_required
-# def logout():
-#     logout_user()
-#     return "Logged out", 200
+@app.route('/logout')
+@multi_auth.login_required
+def logout():
+    auth_header = request.headers.get('Authorization')
+    if auth_header:
+        auth_token = auth_header.split(" ")[1]
+    else:
+        auth_token = ''
+    if auth_token:
+        user = UserModel.verify_auth_token(auth_token)
+        if isinstance(user, UserModel):
+            blacklist_token = BlacklistToken(token=auth_token)
+            blacklist_token.save()
+            return "Logged out", 200
 
 
 @app.route("/users/email/<string:email>")

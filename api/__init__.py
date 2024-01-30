@@ -31,6 +31,8 @@ from api.models.project import ProjectModel
 from api.models.message import MessageModel
 from api.models.main_file import MainFileModel
 from api.models.doc_place import DocPlaceModel
+from api.models.doc_place import DocPlaceModel
+from api.models.validation_key import ValidationKeyModel
 
 
 @basic_auth.verify_password

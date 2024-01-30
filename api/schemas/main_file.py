@@ -2,9 +2,13 @@ from api import ma
 from api.models.main_file import MainFileModel
 
 
-class MainFileSchema(ma.SQLAlchemySchema):
+class MainFileSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = MainFileModel
+        fields = ('file_id', 'file_path', 'file_name', 'rev_num',
+                  'ver_num', 'document_status', 'status_time_set',
+                  'status_time_delta', 'loading_time', 'user_id',
+                  'doc_id', 'project_id')
 
 
 # Десериализация запроса(request)

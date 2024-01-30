@@ -5,10 +5,11 @@ from api.models.project import ProjectModel
 class ProjectSchema(ma.SQLAlchemySchema):
     class Meta:
         model = ProjectModel
+        fields = ('id', 'project_name', 'picture', 'owner_id', 'address', 'time_limits', 'status', 'repo_id')
 
 
 # Десериализация запроса(request)
-class ProjectRequestSchema(ma.SQLAlchemySchema):
+class ProjectRequestSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = ProjectModel
 

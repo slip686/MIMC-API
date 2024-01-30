@@ -2,13 +2,13 @@ from api import ma
 from api.models.users_party import UsersPartyModel
 
 
-class UsersPartySchema(ma.SQLAlchemySchema):
+class UsersPartySchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = UsersPartyModel
 
 
 # Десериализация запроса(request)
-class UsersPartyRequestSchema(ma.SQLAlchemySchema):
+class UsersPartyRequestSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = UsersPartyModel
 
