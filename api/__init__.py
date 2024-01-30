@@ -13,7 +13,7 @@ def create_app():
 
 
 app = create_app()
-db = SQLAlchemy(app)
+db = SQLAlchemy(app, engine_options={"pool_pre_ping": True})
 migrate = Migrate(app, db)
 ma = Marshmallow(app)
 basic_auth = HTTPBasicAuth()
