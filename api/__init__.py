@@ -13,9 +13,8 @@ from flask_marshmallow import Marshmallow
 
 
 app = Flask(__name__)
-db = SQLAlchemy(app)
 app.config.from_object(Config)
-# db = SQLAlchemy(app)
+db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 ma = Marshmallow(app)
 basic_auth = HTTPBasicAuth()
