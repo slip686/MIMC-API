@@ -27,6 +27,7 @@ passlib==1.7.4
 pillow==10.2.0; python_version >= '3.8'
 pluggy==1.4.0; python_version >= '3.8'
 pyjwt==2.8.0; python_version >= '3.7'
+requests==2.31.0; python_version >= '3.7'
 sqlalchemy==2.0.25; python_version >= '3.7'
 tomli==2.0.1; python_version < '3.11'
 typing-extensions==4.9.0; python_version >= '3.8'
