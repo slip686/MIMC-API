@@ -7,7 +7,8 @@ class Config:
     DATABASE_URI_HTTP = os.environ.get('DATABASE_URI_REMOTE',
                                        'postgresql://api:ddtlbnt yjdsq@exon-db.sliplab.net:5433/exon')
     SQLALCHEMY_DATABASE_URI = DATABASE_URI_HTTP
-    # SQLALCHEMY_ENGINE_OPTIONS = {'pool_pre_ping': True, 'pool_recycle': 300}
+    SQLALCHEMY_POOL_RECYCLE = 300
+    SQLALCHEMY_ENGINE_OPTIONS = {'pool_pre_ping': True}
     STASH_URL = 'https://cloud.sliplab.net'
     STASH_TOKEN = 'Token 176dee369b20d91944f6a922d2d590ef8143edb7'
     MSG_BROKER_URL = 'messages.sliplab.net'

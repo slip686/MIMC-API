@@ -6,14 +6,16 @@ from flask_migrate import Migrate
 from flask_marshmallow import Marshmallow
 
 
-def create_app():
-    application = Flask(__name__)
-    application.config.from_object(Config)
-    return application
+# def create_app():
+#     application = Flask(__name__)
+#     application.config.from_object(Config)
+#     return application
 
 
-app = create_app()
-db = SQLAlchemy(app, engine_options={"pool_pre_ping": True})
+app = Flask(__name__)
+db = SQLAlchemy(app)
+app.config.from_object(Config)
+# db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 ma = Marshmallow(app)
 basic_auth = HTTPBasicAuth()
