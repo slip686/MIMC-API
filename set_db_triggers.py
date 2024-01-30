@@ -1,6 +1,6 @@
 #
 # RUN THIS SCRIPT AS ADMIN AFTER INITIAL MIGRATION TO SET PG_NOTIFY TRIGGERS
-# FOR MANAGE MESSAGES FROM DB VIA MQ
+# FOR MANAGE MESSAGES FROM DB TO USERS VIA MQ
 
 from sqlalchemy import text
 from api import db
@@ -25,7 +25,7 @@ with db.engine.connect() as connection:
         "$$;"
     ))
     connection.execute(text(
-        "create function new_channel() returns trigger "
+        "create or replace function new_channel() returns trigger "
         "language plpgsql "
         "as "
         "$$ "
