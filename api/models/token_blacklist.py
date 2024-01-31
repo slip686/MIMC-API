@@ -20,11 +20,15 @@ class BlacklistToken(db.Model):
 
     @staticmethod
     def check_blacklist(auth_token):
-        res = BlacklistToken.query.filter_by(token=str(auth_token)).first()
-        if res:
-            return True
-        else:
-            return False
+        try:
+            res = BlacklistToken.query.filter_by(token=str(auth_token)).first()
+            if res:
+                return True
+            else:
+                return False
+        except Exception:
+            db.session.rollback()
+
 
     def save(self):
         try:
